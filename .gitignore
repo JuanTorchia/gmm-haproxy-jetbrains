@@ -1,0 +1,43 @@
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Gradle
+.gradle/
+build/
+.intellijPlatform/
+allure-results/
+
+# Kotlin
+bin/
+*.kompiled
+
+# Certificate / Secret files (based on publishing guide)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+
+# Java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.directory
+*.swp
+*.bak
+
+# Spike artifacts
+screenshots/*.tmp
+demo/.idea/

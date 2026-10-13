@@ -1,0 +1,22 @@
+{
+  "name": "haproxy",
+  "version": "0.0.1",
+  "contributes": {
+    "languages": [
+      {
+        "id": "haproxy",
+        "aliases": ["HAProxy", "haproxy"],
+        "filenames": ["haproxy.cfg", "haproxy.conf"],
+        "filenamePatterns": ["haproxy*.cfg", "**/haproxy/*.cfg", "**/haproxy/*.conf"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "haproxy",
+        "scopeName": "source.haproxy",
+        "path": "./syntaxes/haproxy.tmLanguage.json"
+      }
+    ]
+  }
+}

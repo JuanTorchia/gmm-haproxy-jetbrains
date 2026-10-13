@@ -1,0 +1,25 @@
+<idea-plugin url="https://github.com/JuanTorchia/gmm-haproxy-jetbrains">
+    <id>net.gmmhub.haproxy</id>
+    <name>HAProxy Config</name>
+    <vendor email="me@juanchi.dev" url="https://juanchi.dev/en">Juan Torchia</vendor>
+
+    <description><![CDATA[
+    Version-aware HAProxy configuration support for JetBrains IDEs: syntax highlighting,
+    validation, completion, hover documentation, go to definition, and safe rename,
+    powered by the same language server as the VS Code extension.
+    <br/><br/>
+    Requires Node.js on PATH for language features.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lsp</depends>
+    <depends>org.jetbrains.plugins.textmate</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <platform.lsp.serverSupportProvider implementation="net.gmmhub.haproxy.HaproxyLspServerSupportProvider"/>
+        <!-- Exact names beat extension mappings such as PyCharm's INI file type claiming *.cfg. -->
+        <fileType name="textmate" fileNames="haproxy.cfg;haproxy.conf" patterns="haproxy*.cfg"/>
+        <textmate.bundleProvider implementation="net.gmmhub.haproxy.HaproxyTextMateBundleProvider"/>
+        <notificationGroup id="HAProxy Config" displayType="BALLOON"/>
+    </extensions>
+</idea-plugin>
