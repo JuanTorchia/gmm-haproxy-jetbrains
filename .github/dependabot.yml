@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      gradle-dependencies:
+        patterns:
+          - "*"
+    # CodeQL's Java extractor does not support Kotlin 2.4.x yet.
+    ignore:
+      - dependency-name: "org.jetbrains.kotlin.jvm"
+        versions: [">= 2.4.0"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
