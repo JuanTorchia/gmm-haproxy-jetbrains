@@ -1,15 +1,47 @@
 <idea-plugin url="https://github.com/JuanTorchia/gmm-haproxy-jetbrains">
     <id>net.gmmhub.haproxy</id>
     <name>HAProxy Config</name>
-    <vendor email="me@juanchi.dev" url="https://juanchi.dev/en">Juan Torchia</vendor>
+    <vendor email="me@juanchi.dev" url="https://gmmhub.net/">GMM Software Solutions</vendor>
 
     <description><![CDATA[
-    Version-aware HAProxy configuration support for JetBrains IDEs: syntax highlighting,
-    validation, completion, hover documentation, go to definition, and safe rename,
-    powered by the same language server as the VS Code extension.
+    Version-aware HAProxy configuration support for JetBrains IDEs. Catch config mistakes
+    while editing instead of when HAProxy refuses to reload.
     <br/><br/>
-    Requires Node.js on PATH for language features.
+    Powered by the same language server as the
+    <a href="https://marketplace.visualstudio.com/items?itemName=gmm.gmm-haproxy-vscode">HAProxy Config extension for VS Code</a>
+    (also on <a href="https://open-vsx.org/extension/gmm/gmm-haproxy-vscode">Open VSX</a>).
+    <br/><br/>
+    Features:
+    <ul>
+      <li>Syntax highlighting for sections, directives, ACLs, addresses, ports and timeouts.</li>
+      <li>Validation against the HAProxy version you run (2.4 to 3.4): unknown directives, wrong sections,
+          out-of-range ports, unitless timeouts, deprecated options and undefined backends.</li>
+      <li>Context-aware completion for directives and <code>option</code> variants.</li>
+      <li>Hover documentation with signature, valid sections and the version that introduced the directive.</li>
+      <li>Go to definition and rename for backends.</li>
+    </ul>
+    Files are recognized by name (<code>haproxy.cfg</code>, <code>haproxy.conf</code>, <code>haproxy*.cfg</code>,
+    <code>.cfg</code>/<code>.conf</code> inside a <code>haproxy/</code> directory) and by HAProxy section headers
+    in other <code>.cfg</code>/<code>.conf</code> files that no other plugin claims.
+    <br/><br/>
+    <b>Requirements:</b> Node.js (LTS) runs the language server. It is taken from PATH, or from
+    <i>Settings | Languages &amp; Frameworks | HAProxy</i>, where you also choose the HAProxy version.
+    Without Node.js, syntax highlighting still works.
+    <br/><br/>
+    Guide: <a href="https://gmmhub.net/haproxy-config-check">gmmhub.net/haproxy-config-check</a> ·
+    Source and issues: <a href="https://github.com/JuanTorchia/gmm-haproxy-jetbrains">GitHub</a>
     ]]></description>
+
+    <change-notes><![CDATA[
+    <b>0.1.0</b> - first release
+    <ul>
+      <li>Syntax highlighting, version-aware validation, completion, hover documentation,
+          go to definition and rename through the HAProxy Config language server 0.6.1.</li>
+      <li>Settings page for the HAProxy version (2.4 to 3.4) and the Node.js executable.</li>
+      <li>Detection of HAProxy files by name and by section headers.</li>
+      <li>Warning with a shortcut to the settings when Node.js cannot be found.</li>
+    </ul>
+    ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lsp</depends>
@@ -19,7 +51,12 @@
         <platform.lsp.serverSupportProvider implementation="net.gmmhub.haproxy.HaproxyLspServerSupportProvider"/>
         <!-- Exact names beat extension mappings such as PyCharm's INI file type claiming *.cfg. -->
         <fileType name="textmate" fileNames="haproxy.cfg;haproxy.conf" patterns="haproxy*.cfg"/>
+        <fileTypeOverrider implementation="net.gmmhub.haproxy.HaproxyFileTypeOverrider"/>
         <textmate.bundleProvider implementation="net.gmmhub.haproxy.HaproxyTextMateBundleProvider"/>
+        <applicationConfigurable parentId="language"
+                                 instance="net.gmmhub.haproxy.HaproxyConfigurable"
+                                 id="net.gmmhub.haproxy.settings"
+                                 displayName="HAProxy"/>
         <notificationGroup id="HAProxy Config" displayType="BALLOON"/>
     </extensions>
 </idea-plugin>

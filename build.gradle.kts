@@ -1,5 +1,8 @@
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
+import java.net.URI
+import java.security.MessageDigest
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -10,7 +13,7 @@ plugins {
 }
 
 group = "net.gmmhub"
-version = project.findProperty("pluginVersion")?.toString() ?: "0.0.1-spike"
+version = project.findProperty("pluginVersion")?.toString() ?: "0.1.0"
 
 repositories {
     mavenCentral()
@@ -23,7 +26,10 @@ dependencies {
     intellijPlatform {
         intellijIdea("2026.1.3")
         bundledPlugin("org.jetbrains.plugins.textmate")
+        testFramework(TestFrameworkType.Platform)
     }
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 java {
@@ -32,16 +38,49 @@ java {
     }
 }
 
-val languageServerRepo = layout.projectDirectory.dir(
-    providers.gradleProperty("haproxyServerRepo").orElse("../gmm-haproxy-vscode").get()
-)
+// The language server and grammar come from a released gmm-haproxy-vscode VSIX (Open VSX),
+// pinned by version and SHA-256 in gradle.properties. See README "Bundled language server" to bump it.
+val haproxyServerVersion = providers.gradleProperty("haproxyServerVersion").get()
+val haproxyServerSha256 = providers.gradleProperty("haproxyServerSha256").get()
+val haproxyServerVsix = layout.buildDirectory.file("haproxy-server/gmm-haproxy-vscode-$haproxyServerVersion.vsix")
+val haproxyServerDir = layout.buildDirectory.dir("haproxy-server/extension")
 
-val buildLanguageServer = tasks.register<Exec>("buildLanguageServer") {
+val downloadLanguageServer = tasks.register("downloadLanguageServer") {
     group = "build"
-    description = "Builds the bundled HAProxy language server in the sibling VS Code repository when missing."
-    workingDir = languageServerRepo.asFile
-    commandLine("npm", "run", "build:server")
-    onlyIf { !languageServerRepo.file("server/out/server.js").asFile.exists() }
+    description = "Downloads the pinned gmm-haproxy-vscode VSIX and checks its SHA-256."
+    val version = haproxyServerVersion
+    val expectedSha256 = haproxyServerSha256
+    val vsix = haproxyServerVsix
+    inputs.property("version", version)
+    inputs.property("sha256", expectedSha256)
+    outputs.file(vsix)
+
+    doLast {
+        val target = vsix.get().asFile
+        val url = "https://open-vsx.org/api/gmm/gmm-haproxy-vscode/$version/file/gmm.gmm-haproxy-vscode-$version.vsix"
+        target.parentFile.mkdirs()
+        URI(url).toURL().openStream().use { input -> target.outputStream().use { input.copyTo(it) } }
+        val actual = MessageDigest.getInstance("SHA-256").digest(target.readBytes()).joinToString("") { "%02x".format(it) }
+        if (actual != expectedSha256) {
+            target.delete()
+            throw GradleException("SHA-256 mismatch for $url: expected $expectedSha256, got $actual")
+        }
+    }
+}
+
+val extractLanguageServer = tasks.register<Sync>("extractLanguageServer") {
+    group = "build"
+    description = "Extracts server.js, the TextMate grammar and the language configuration from the pinned VSIX."
+    from(zipTree(downloadLanguageServer.map { haproxyServerVsix.get() })) {
+        include(
+            "extension/server/out/server.js",
+            "extension/syntaxes/haproxy.tmLanguage.json",
+            "extension/language-configuration.json",
+        )
+        eachFile { path = path.removePrefix("extension/") }
+        includeEmptyDirs = false
+    }
+    into(haproxyServerDir)
 }
 
 tasks {
@@ -57,15 +96,15 @@ tasks {
     }
 
     withType<PrepareSandboxTask>().configureEach {
-        dependsOn(buildLanguageServer)
+        dependsOn(extractLanguageServer)
         val pluginDir = intellijPlatform.projectName.get()
-        from(languageServerRepo.file("server/out/server.js")) {
+        from(haproxyServerDir.map { it.file("server/out/server.js") }) {
             into("$pluginDir/language-server")
         }
-        from(languageServerRepo.file("syntaxes/haproxy.tmLanguage.json")) {
+        from(haproxyServerDir.map { it.file("syntaxes/haproxy.tmLanguage.json") }) {
             into("$pluginDir/textmate/haproxy/syntaxes")
         }
-        from(languageServerRepo.file("language-configuration.json")) {
+        from(haproxyServerDir.map { it.file("language-configuration.json") }) {
             into("$pluginDir/textmate/haproxy")
         }
         from(layout.projectDirectory.file("src/main/textmate/package.json")) {
@@ -78,12 +117,11 @@ tasks {
             listOf(layout.projectDirectory.dir("demo").asFile.absolutePath)
         }
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOfNotNull(
+            listOf(
                 "-Didea.trust.all.projects=true",
                 "-Djb.consents.confirmation.enabled=false",
                 "-Djb.privacy.policy.text=<!--999.999-->",
                 "-Dide.show.tips.on.startup.default.value=false",
-                providers.gradleProperty("haproxyVersion").orNull?.let { "-Dhaproxy.version=$it" },
             )
         }
     }
@@ -111,6 +149,16 @@ intellijPlatform {
                 create(IntelliJPlatformType.PyCharm, "2026.1.3")
             }
         }
+    }
+
+    signing {
+        certificateChain = System.getenv("CERTIFICATE_CHAIN")
+        privateKey = System.getenv("PRIVATE_KEY")
+        password = System.getenv("PRIVATE_KEY_PASSWORD")
+    }
+
+    publishing {
+        token = System.getenv("PUBLISH_TOKEN")
     }
 }
 

@@ -38,6 +38,9 @@ Thumbs.db
 *.swp
 *.bak
 
-# Spike artifacts
+# Local artifacts
 screenshots/*.tmp
 demo/.idea/
+
+# Kotlin compiler session data
+.kotlin/
