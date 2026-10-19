@@ -1,6 +1,6 @@
 <idea-plugin url="https://github.com/JuanTorchia/gmm-haproxy-jetbrains">
     <id>net.gmmhub.haproxy</id>
-    <name>HAProxy Config</name>
+    <name>HAProxy Language Support</name>
     <vendor email="me@juanchi.dev" url="https://gmmhub.net/">GMM Software Solutions</vendor>
 
     <description><![CDATA[
@@ -57,6 +57,6 @@
                                  instance="net.gmmhub.haproxy.HaproxyConfigurable"
                                  id="net.gmmhub.haproxy.settings"
                                  displayName="HAProxy"/>
-        <notificationGroup id="HAProxy Config" displayType="BALLOON"/>
+        <notificationGroup id="HAProxy Language Support" displayType="BALLOON"/>
     </extensions>
 </idea-plugin>

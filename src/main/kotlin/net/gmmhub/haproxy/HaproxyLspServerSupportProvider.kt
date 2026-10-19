@@ -50,7 +50,7 @@ class HaproxyLspServerSupportProvider : LspServerSupportProvider, PluginAware {
         if (project.getUserData(NODE_WARNING_SHOWN) == true) return
         project.putUserData(NODE_WARNING_SHOWN, true)
         NotificationGroupManager.getInstance()
-            .getNotificationGroup("HAProxy Config")
+            .getNotificationGroup("HAProxy Language Support")
             .createNotification(
                 "HAProxy language server unavailable",
                 "$reason Validation, completion, hover, and navigation need it. Syntax highlighting still works.",

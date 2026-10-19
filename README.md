@@ -1,4 +1,4 @@
-# HAProxy Config for JetBrains IDEs
+# HAProxy Language Support for JetBrains IDEs
 
 [![Build](https://github.com/JuanTorchia/gmm-haproxy-jetbrains/actions/workflows/build.yml/badge.svg)](https://github.com/JuanTorchia/gmm-haproxy-jetbrains/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -69,7 +69,7 @@ from the generic `.cfg`/`.conf` grammar, because the IDE picks TextMate grammars
 
 ## Install
 
-From the JetBrains Marketplace: *Settings | Plugins | Marketplace*, search for **HAProxy Config**.
+From the JetBrains Marketplace: *Settings | Plugins | Marketplace*, search for **HAProxy Language Support**.
 
 From a release ZIP: download `gmm-haproxy-jetbrains-<version>.zip` from
 [GitHub Releases](https://github.com/JuanTorchia/gmm-haproxy-jetbrains/releases), then
