@@ -13,7 +13,7 @@ internal sealed interface NodeLookup {
 internal object HaproxyNode {
     fun resolve(
         configuredPath: String,
-        findOnPath: () -> File? = { PathEnvironmentVariableUtil.findExecutableInPathOnAnyOS("node") },
+        findOnPath: () -> File? = { findOnPath("node", PathEnvironmentVariableUtil.getPathVariableValue()) },
     ): NodeLookup {
         if (configuredPath.isNotBlank()) {
             val file = File(configuredPath.trim())
@@ -21,4 +21,15 @@ internal object HaproxyNode {
         }
         return findOnPath()?.let { NodeLookup.Found(it) } ?: NodeLookup.NotOnPath
     }
+
+    // PathEnvironmentVariableUtil's finders are deprecated from 263 and their replacement (findFirst) does not exist in 261.
+    fun findOnPath(
+        name: String,
+        pathValue: String?,
+        // Empty outside Windows, where the bare name is the executable.
+        extensions: List<String> = PathEnvironmentVariableUtil.getWindowsExecutableFileExtensions().ifEmpty { listOf("") },
+    ): File? =
+        PathEnvironmentVariableUtil.getPathDirs(pathValue.orEmpty()).asSequence()
+            .flatMap { dir -> extensions.asSequence().map { File(dir, name + it) } }
+            .firstOrNull { it.isFile && it.canExecute() }
 }
