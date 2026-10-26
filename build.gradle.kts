@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "net.gmmhub"
-version = project.findProperty("pluginVersion")?.toString() ?: "0.1.0"
+version = project.findProperty("pluginVersion")?.toString() ?: "0.1.1"
 
 repositories {
     mavenCentral()
@@ -133,7 +133,7 @@ intellijPlatform {
     pluginConfiguration {
         ideaVersion {
             sinceBuild = "261"
-            untilBuild = provider { null }
+            untilBuild = "262.*"
         }
     }
 
