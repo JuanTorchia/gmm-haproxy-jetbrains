@@ -11,13 +11,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.lsp.api.LspServerSupportProvider
-import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
+import com.intellij.platform.lsp.api.LspIntegrationProvider
+import com.intellij.platform.lsp.api.ProjectWideLspClientDescriptor
 import org.eclipse.lsp4j.ConfigurationItem
 import java.io.File
 import java.nio.file.Path
 
-class HaproxyLspServerSupportProvider : LspServerSupportProvider, PluginAware {
+class HaproxyLspIntegrationProvider : LspIntegrationProvider, PluginAware {
     private lateinit var plugin: PluginDescriptor
 
     override fun setPluginDescriptor(pluginDescriptor: PluginDescriptor) {
@@ -27,13 +27,13 @@ class HaproxyLspServerSupportProvider : LspServerSupportProvider, PluginAware {
     override fun fileOpened(
         project: Project,
         file: VirtualFile,
-        serverStarter: LspServerSupportProvider.LspServerStarter,
+        clientStarter: LspIntegrationProvider.LspClientStarter,
     ) {
         if (!HaproxyFiles.isHaproxyConfig(file)) return
         when (val node = HaproxyNode.resolve(HaproxySettings.getInstance().nodePath)) {
             is NodeLookup.Found -> {
                 val serverScript = HaproxyPlugin.serverScript(plugin.pluginPath)
-                serverStarter.ensureServerStarted(HaproxyLspServerDescriptor(project, node.executable, serverScript))
+                clientStarter.ensureClientStarted(HaproxyLspClientDescriptor(project, node.executable, serverScript))
             }
             is NodeLookup.ConfiguredPathInvalid -> notifyNodeUnavailable(
                 project,
@@ -72,11 +72,11 @@ class HaproxyLspServerSupportProvider : LspServerSupportProvider, PluginAware {
     }
 }
 
-private class HaproxyLspServerDescriptor(
+private class HaproxyLspClientDescriptor(
     project: Project,
     private val node: File,
     private val serverScript: Path,
-) : ProjectWideLspServerDescriptor(project, "HAProxy") {
+) : ProjectWideLspClientDescriptor(project, "HAProxy") {
 
     override fun isSupportedFile(file: VirtualFile): Boolean = HaproxyFiles.isHaproxyConfig(file)
 

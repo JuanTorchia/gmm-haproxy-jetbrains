@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "net.gmmhub"
-version = project.findProperty("pluginVersion")?.toString() ?: "0.1.0"
+version = project.findProperty("pluginVersion")?.toString() ?: "0.2.0"
 
 repositories {
     mavenCentral()
@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdea("2026.1.3")
+        intellijIdea("263.7307.44")
         bundledPlugin("org.jetbrains.plugins.textmate")
         testFramework(TestFrameworkType.Platform)
     }
@@ -132,7 +132,7 @@ intellijPlatform {
 
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "261"
+            sinceBuild = "263"
             untilBuild = provider { null }
         }
     }
@@ -144,9 +144,8 @@ intellijPlatform {
             if (localIdes != null) {
                 localIdes.split(",").forEach { local(file(it.trim())) }
             } else {
-                create(IntelliJPlatformType.IntellijIdea, "2026.1.4")
-                create(IntelliJPlatformType.IntellijIdea, "2026.2.2")
-                create(IntelliJPlatformType.PyCharm, "2026.1.3")
+                create(IntelliJPlatformType.IntellijIdea, "263.7307.44")
+                create(IntelliJPlatformType.PyCharm, "263.7307.50")
             }
         }
     }
@@ -164,7 +163,7 @@ intellijPlatform {
 
 intellijPlatformTesting.runIde.register("runPyCharm") {
     type = IntelliJPlatformType.PyCharm
-    version = "2026.1.3"
+    version = "263.7307.50"
     task {
         argumentProviders += CommandLineArgumentProvider {
             listOf(layout.projectDirectory.dir("demo").asFile.absolutePath)
