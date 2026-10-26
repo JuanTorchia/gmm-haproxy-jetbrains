@@ -33,6 +33,16 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <b>0.2.0</b>
+    <ul>
+      <li>Requires IntelliJ-based IDEs 2026.3 or later; 2026.1 and 2026.2 stay on 0.1.x.</li>
+      <li>Moved to the 2026.3 LSP client API, replacing the deprecated language server API.</li>
+    </ul>
+    <b>0.1.1</b>
+    <ul>
+      <li>Fixed: the Node.js lookup on PATH no longer uses a platform API scheduled for removal.</li>
+      <li>CI maintenance: pinned and updated workflow actions and the Gradle wrapper.</li>
+    </ul>
     <b>0.1.0</b> - first release
     <ul>
       <li>Syntax highlighting, version-aware validation, completion, hover documentation,
@@ -48,7 +58,7 @@
     <depends>org.jetbrains.plugins.textmate</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <platform.lsp.serverSupportProvider implementation="net.gmmhub.haproxy.HaproxyLspServerSupportProvider"/>
+        <platform.lsp.integrationProvider implementation="net.gmmhub.haproxy.HaproxyLspIntegrationProvider"/>
         <!-- Exact names beat extension mappings such as PyCharm's INI file type claiming *.cfg. -->
         <fileType name="textmate" fileNames="haproxy.cfg;haproxy.conf" patterns="haproxy*.cfg"/>
         <fileTypeOverrider implementation="net.gmmhub.haproxy.HaproxyFileTypeOverrider"/>
