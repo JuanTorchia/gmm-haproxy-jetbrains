@@ -33,6 +33,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <b>0.1.1</b>
+    <ul>
+      <li>Fixed: the Node.js lookup on PATH no longer uses a platform API scheduled for removal.</li>
+      <li>Supported IDE range capped at 2026.2; 2026.3 and later get the 0.2 line.</li>
+      <li>CI maintenance: pinned and updated workflow actions and the Gradle wrapper.</li>
+    </ul>
     <b>0.1.0</b> - first release
     <ul>
       <li>Syntax highlighting, version-aware validation, completion, hover documentation,
