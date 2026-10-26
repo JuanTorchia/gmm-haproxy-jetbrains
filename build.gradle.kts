@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdea("263.7307.44")
+        intellijIdea("2026.1.4")
         bundledPlugin("org.jetbrains.plugins.textmate")
         testFramework(TestFrameworkType.Platform)
     }
@@ -132,7 +132,7 @@ intellijPlatform {
 
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "263"
+            sinceBuild = "261.26222"
             untilBuild = provider { null }
         }
     }
@@ -144,6 +144,8 @@ intellijPlatform {
             if (localIdes != null) {
                 localIdes.split(",").forEach { local(file(it.trim())) }
             } else {
+                create(IntelliJPlatformType.IntellijIdea, "2026.1.4")
+                create(IntelliJPlatformType.IntellijIdea, "2026.2.3")
                 create(IntelliJPlatformType.IntellijIdea, "263.7307.44")
                 create(IntelliJPlatformType.PyCharm, "263.7307.50")
             }
@@ -163,7 +165,7 @@ intellijPlatform {
 
 intellijPlatformTesting.runIde.register("runPyCharm") {
     type = IntelliJPlatformType.PyCharm
-    version = "263.7307.50"
+    version = "2026.1.4"
     task {
         argumentProviders += CommandLineArgumentProvider {
             listOf(layout.projectDirectory.dir("demo").asFile.absolutePath)
