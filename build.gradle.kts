@@ -3,13 +3,22 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import java.net.URI
 import java.security.MessageDigest
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+// Security alignment of build-only dependencies; plugin runtime libraries are unchanged.
+buildscript {
+    dependencies {
+        classpath(platform("com.fasterxml.jackson:jackson-bom:2.21.7"))
+        classpath("org.jsoup:jsoup:1.23.2")
+    }
+}
 
 plugins {
     id("java")
     id("org.jetbrains.intellij.platform") version "2.19.0"
-    id("org.jetbrains.kotlin.jvm") version "2.3.21"
+    id("org.jetbrains.kotlin.jvm") version "2.4.20"
 }
 
 group = "net.gmmhub"
@@ -92,6 +101,8 @@ tasks {
     withType<KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
+            apiVersion.set(KotlinVersion.KOTLIN_2_3)
+            languageVersion.set(KotlinVersion.KOTLIN_2_3)
         }
     }
 
