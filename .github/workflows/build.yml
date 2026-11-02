@@ -33,6 +33,23 @@ jobs:
           chmod +x gradlew
           ./gradlew build verifyPlugin --no-daemon
 
+      - name: Resolve exact dependency inventory
+        run: ./gradlew --init-script scripts/security/inventory.init.gradle securityInventory --no-daemon
+
+      - name: Verify scanner contract and query OSV
+        run: |
+          python3 -m unittest discover -s scripts/security -p 'test_*.py'
+          python3 scripts/security/scan_osv.py
+
+      - name: Retain dependency security evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: resolved-dependency-security
+          path: build/security/*.json
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Upload plugin ZIP
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
