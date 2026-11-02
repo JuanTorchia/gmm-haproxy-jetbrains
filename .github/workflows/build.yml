@@ -31,7 +31,7 @@ jobs:
       - name: Build, test and verify
         run: |
           chmod +x gradlew
-          ./gradlew build verifyPlugin --no-daemon
+          ./gradlew build buildPlugin verifyPlugin --no-daemon
 
       - name: Resolve exact dependency inventory
         run: ./gradlew --init-script scripts/security/inventory.init.gradle securityInventory --no-daemon
