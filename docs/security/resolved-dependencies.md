@@ -35,3 +35,11 @@ IDE compatibility or publish a Marketplace version. Reverting removes the scan.
 The pinned JavaScript server/grammar version and SHA in gradle.properties are
 unchanged. This Maven scan does not cover their bundled npm dependencies;
 that limitation remains explicit.
+
+
+Actual plugin ZIPs and a per-JAR SHA-256/Maven-metadata inventory are retained
+alongside the Gradle coordinates. This distinguishes the built payload from
+IDE/test/build classpaths. JARs without Maven metadata are explicitly unmapped
+and require review (including identifying this project's own output); they
+are never interpreted as third-party libraries with a clean advisory result.
+Shaded dependencies and non-JAR payloads remain explicit coverage limits.
