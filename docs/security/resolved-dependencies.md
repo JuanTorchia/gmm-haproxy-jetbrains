@@ -9,8 +9,8 @@ or an empty inventory fail the gate instead of becoming a clean result.
 `scripts/security/scan_osv.py` queries the maintained OSV Maven database with
 those exact coordinates. Only public coordinates and versions are sent, not
 source files, paths, certificates or credentials. Partial responses, HTTP errors
-and malformed results fail. Any matched advisory fails pending investigation;
-there is no blanket allowlist. JSON inventory and findings are retained for
+and malformed results fail. Any unclassified advisory fails. Narrow package/version/advisory/scope reviews
+retain raw findings and expire; new, changed, stale or expired findings fail. JSON inventory and findings are retained for
 30 days, including failed runs. Four local contract tests cover missing results
 and invalid inventories. No Gradle resolution or build runs on the local VM.
 
@@ -43,3 +43,17 @@ IDE/test/build classpaths. JARs without Maven metadata are explicitly unmapped
 and require review (including identifying this project's own output); they
 are never interpreted as third-party libraries with a clean advisory result.
 Shaded dependencies and non-JAR payloads remain explicit coverage limits.
+
+## Build-tool security updates
+
+The same pinned IntelliJ/Kotlin build toolchain in CertView first resolved
+vulnerable Jackson, jsoup and Kotlin Gradle plugin components. Kotlin compiler /
+Gradle plugin 2.4.20 fixes unsafe cache deserialization; language/API2.3, JVM21
+and the IDE baseline remain fixed. Build-only Jackson BOM2.21.7 and jsoup1.23.2
+align corrected versions. The independent resolved scan and Plugin Verifier
+must validate these changes before integration. No application/server pins change.
+
+Undertow2.4.3.Final has a raw feed match without a provided fix and conflicting
+affected-range metadata. Upstream's localhost repository shim uses path-template
+parameters, not the described servlet multipart parameter path. #19 tracks the
+exact build-only review through 2026-12-02. No other advisory is accepted by it.
