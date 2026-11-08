@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // Security alignment of build-only dependencies; plugin runtime libraries are unchanged.
 buildscript {
     dependencies {
-        classpath(platform("com.fasterxml.jackson:jackson-bom:2.21.7"))
-        classpath("org.jsoup:jsoup:1.23.2")
+        classpath(platform("com.fasterxml.jackson:jackson-bom:2.22.4"))
+        classpath("org.jsoup:jsoup:1.24.1")
     }
 }
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij.platform") version "2.19.0"
+    id("org.jetbrains.intellij.platform") version "2.20.0"
     id("org.jetbrains.kotlin.jvm") version "2.4.20"
 }
 
